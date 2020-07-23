@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void fetchPostings() async {
     var url = Uri.parse("http://192.168.29.132:3000/postings/allPostings");
     url = url.replace(query: "isPicked=false");
-    var result = await http.get(url);
+    var result = await http.get(url, headers: {"Accept": "application/json"});
     print(result.statusCode);
     print(json.decode(result.body));
     setState(() {
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var url =
         Uri.parse("http://192.168.29.132:3002/subscriptions/allSubscriptions");
     url = url.replace(query: "deliveredToday=false");
-    var result = await http.get(url);
+    var result = await http.get(url, headers: {"Accept": "application/json"});
 
     print(json.decode(result.body));
     setState(() {

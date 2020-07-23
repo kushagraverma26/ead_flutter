@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:waste_food_management/main.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
@@ -29,7 +30,8 @@ class _PostingPageState extends State<PostingPage> {
   File _image;
 
   Future clickImage() async {
-    var image = await ImagePicker().getImage(source: ImageSource.camera, imageQuality: 20);
+    var image = await ImagePicker()
+        .getImage(source: ImageSource.camera, imageQuality: 20);
 
     setState(() {
       _image = File(image.path);
@@ -62,6 +64,74 @@ class _PostingPageState extends State<PostingPage> {
         fontSize: 16.0);
   }
 
+  void _showPaymentDialog(String payment) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Payment Amount"),
+          content: new Text("Payment Amount to be given (in Rs.): " + payment),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMessageDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("No Payment Generated"),
+          content: new Text(
+              "Please generate the ayment amount before confirming the Pickup."),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showPickedUpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Pickup Successful"),
+          content:
+              new Text("Please click continue to go back to the home page."),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new MyHomePage(
+                          title: "Home",
+                        ));
+
+                Navigator.of(context)
+                    .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _routeToSellerDetailsPage(String sellerId) async {
     var url = Uri.parse("http://192.168.29.132:3000/sellers/sellerDetails");
     // print("_id={$sellerId}");
@@ -85,8 +155,8 @@ class _PostingPageState extends State<PostingPage> {
     }
   }
 
-  _generatePayment(File image, String name, String category, 
-      String price) async {
+  _generatePayment(
+      File image, String name, String category, String price) async {
     if (_validateAndSave()) {
       print("////////////////sending req**************************");
       // inventory server
@@ -94,7 +164,7 @@ class _PostingPageState extends State<PostingPage> {
         "POST",
         Uri.parse("http://a-b84328f3.localhost.run/api/quality/"),
       );
-      request.headers["Content-Type"] =  "application/json";
+      request.headers["Content-Type"] = "application/json";
       request.fields['name'] = name;
       request.fields['category'] = category;
       request.fields['quantity'] = actualQuantity.toString();
@@ -255,6 +325,30 @@ class _PostingPageState extends State<PostingPage> {
         ));
   }
 
+  Widget _showConfirmPickupButton() {
+    return Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 20.0),
+        child: new MaterialButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(18.0)),
+          elevation: 5.0,
+          minWidth: 200.0,
+          height: 42.0,
+          color: Colors.blue,
+          child: new Text('Confirm Pickup',
+              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+          onPressed: () {
+            if (paymentAmount == null) {
+              print("No Payment Amount");
+              _showMessageDialog();
+            } else {
+              print("HAHAHAH");
+              //_confirmPickup(widget.posting);
+            }
+          },
+        ));
+  }
+
   Widget _showDivider() {
     return Divider(
       thickness: 5,
@@ -284,7 +378,6 @@ class _PostingPageState extends State<PostingPage> {
           _showDivider(),
           _showUploadImageButton(),
           _showDivider(),
-
           new Form(
               key: _formKey,
               autovalidate: false,
@@ -292,10 +385,7 @@ class _PostingPageState extends State<PostingPage> {
                 _showActualQuantityInput(),
               ])),
           _showGeneratePaymentButton(),
-
-          // _showBuyerDetailsButton(),
-          // _showGenerateBillButton(),
-          // _showConfirmDeliveryButton()
+          _showConfirmPickupButton()
         ],
       ),
     );
