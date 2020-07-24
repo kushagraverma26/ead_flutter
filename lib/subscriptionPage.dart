@@ -99,6 +99,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         fontSize: 16.0);
   }
 
+// Communicating with the Buyer's Portal
   _routeToBuyerDetailsPage(String buyerId) async {
     // Buyer server
     var url = Uri.parse("http://192.168.29.132:3002/buyers/buyerDetails");
@@ -123,7 +124,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     }
   }
 
-
+// Communicating with the Inventory
   _generateBill(dynamic item) async {
     //Inventory Server
     var url = "http://782adbc77eb0.ngrok.io/api/inventory/remove";
@@ -144,6 +145,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     }
   }
 
+// Communicating with the Buyer's Portal
   _confirmDelivery(dynamic body) async {
     var url = "http://192.168.29.132:3002/subscriptions/delivered";
     var response = await http.post(url, body: {
@@ -267,6 +269,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         ));
   }
 
+// Building Page
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

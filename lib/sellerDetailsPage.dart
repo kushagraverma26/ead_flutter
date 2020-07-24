@@ -9,13 +9,12 @@ class SellerDetailsPage extends StatefulWidget {
 }
 
 class _SellerDetailsPageState extends State<SellerDetailsPage> {
-  
   @override
   void initState() {
     super.initState();
   }
 
-   Widget _showSellerId() {
+  Widget _showSellerId() {
     return Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.fromLTRB(10, 30, 10, 10),
@@ -62,15 +61,13 @@ class _SellerDetailsPageState extends State<SellerDetailsPage> {
         ));
   }
 
-
   Widget _showDivider() {
     return Divider(
       thickness: 5,
     );
   }
 
-  
-
+// Displaying the details of the seller
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -92,6 +89,4 @@ class _SellerDetailsPageState extends State<SellerDetailsPage> {
       ),
     );
   }
-
-  
-  }
+}

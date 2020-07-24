@@ -77,6 +77,7 @@ class _BuyerDetailsPageState extends State<BuyerDetailsPage> {
     );
   }
 
+// Displaying the details of the buyer
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

@@ -6,7 +6,6 @@ import 'package:waste_food_management/main.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-
 import 'package:waste_food_management/sellerDetailsPage.dart';
 
 class PostingPage extends StatefulWidget {
@@ -45,6 +44,7 @@ class _PostingPageState extends State<PostingPage> {
     return double.tryParse(s) != null;
   }
 
+// Form Validate
   bool _validateAndSave() {
     final form = _formKey.currentState;
     if (form.validate()) {
@@ -54,6 +54,7 @@ class _PostingPageState extends State<PostingPage> {
     return false;
   }
 
+// Show Toast
   void toast(String message) {
     Fluttertoast.showToast(
         msg: message,
@@ -132,6 +133,7 @@ class _PostingPageState extends State<PostingPage> {
     );
   }
 
+// Communicating With the Sellers' Portal
   _routeToSellerDetailsPage(String sellerId) async {
     var url = Uri.parse("http://192.168.29.132:3000/sellers/sellerDetails");
     // print("_id={$sellerId}");
@@ -155,6 +157,7 @@ class _PostingPageState extends State<PostingPage> {
     }
   }
 
+// Communicating with the Inventory
   _generatePayment(
       File image, String name, String category, String price) async {
     if (_validateAndSave()) {
@@ -179,7 +182,7 @@ class _PostingPageState extends State<PostingPage> {
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
 
-      print("////////////////////////////////////**************************");
+      print("/////////////received************************");
 
       if (response.statusCode == 200) {
         print(json.decode(responseString).toString());
@@ -196,6 +199,7 @@ class _PostingPageState extends State<PostingPage> {
     }
   }
 
+// Communicating with the Seller's Portal
   _confirmPickup(dynamic body) async {
     var url = "http://192.168.29.132:3000/postings/picked";
     var response = await http.post(url, body: {
@@ -377,6 +381,7 @@ class _PostingPageState extends State<PostingPage> {
     );
   }
 
+// Building Page
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

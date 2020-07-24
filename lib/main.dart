@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 //-------------------------------------------------Postings list------------------------------------------------------------------
 
- _routeToPostingPage(dynamic posting) {
+  _routeToPostingPage(dynamic posting) {
     var route = new MaterialPageRoute(
       builder: (BuildContext context) => new PostingPage(
         posting: posting,
@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(route);
   }
 
+// Fetches all unpicked Postings
   void fetchPostings() async {
     var url = Uri.parse("http://192.168.29.132:3000/postings/allPostings");
     url = url.replace(query: "isPicked=false");
@@ -83,12 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       _routeToPostingPage(postings[index]);
                     },
-                                      child: Card(
+                    child: Card(
                       child: Column(
                         children: <Widget>[
                           ListTile(
-                            title: Text("Item Name: " + postings[index]['item']['name']),
-                             subtitle: Text("Quantity: " + postings[index]['quantity'].toString()),
+                            title: Text("Item Name: " +
+                                postings[index]['item']['name']),
+                            subtitle: Text("Quantity: " +
+                                postings[index]['quantity'].toString()),
                           )
                         ],
                       ),
@@ -100,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         : Center(child: CircularProgressIndicator());
   }
 //-------------------------------------------------Subscriptions list------------------------------------------------------------------
+
   _routeToSubscriptionPage(dynamic subscription) {
     var route = new MaterialPageRoute(
       builder: (BuildContext context) => new SubscriptionPage(
@@ -109,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(route);
   }
 
+// Fetches all undelivered subscriptions
   void fetchSubscriptions() async {
     var url =
         Uri.parse("http://192.168.29.132:3002/subscriptions/allSubscriptions");
