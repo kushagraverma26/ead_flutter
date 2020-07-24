@@ -31,7 +31,7 @@ class _PostingPageState extends State<PostingPage> {
 
   Future clickImage() async {
     var image = await ImagePicker()
-        .getImage(source: ImageSource.camera, imageQuality: 20);
+        .getImage(source: ImageSource.camera, imageQuality: 10);
 
     setState(() {
       _image = File(image.path);
@@ -70,7 +70,7 @@ class _PostingPageState extends State<PostingPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("Payment Amount"),
-          content: new Text("Payment Amount to be given (in Rs.): " + payment),
+          content: new Text("Payment amount to be given (in Rs.): " + payment),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Continue"),
@@ -91,7 +91,7 @@ class _PostingPageState extends State<PostingPage> {
         return AlertDialog(
           title: new Text("No Payment Generated"),
           content: new Text(
-              "Please generate the ayment amount before confirming the Pickup."),
+              "Please generate the payment amount before confirming the Pickup."),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Continue"),
@@ -162,7 +162,7 @@ class _PostingPageState extends State<PostingPage> {
       // inventory server
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("http://a-b84328f3.localhost.run/api/quality/"),
+        Uri.parse("http://782adbc77eb0.ngrok.io/api/quality/"),
       );
       request.headers["Content-Type"] = "application/json";
       request.fields['name'] = name;
@@ -170,23 +170,45 @@ class _PostingPageState extends State<PostingPage> {
       request.fields['quantity'] = actualQuantity.toString();
       request.fields['price'] = price;
       var pic = await http.MultipartFile.fromPath("image", image.path);
-
       request.files.add(pic);
-      // var response = await request.send();
 
+      // var response = await request.send();
+      toast("Processing image...Please Wait...");
       http.StreamedResponse response = await request.send();
       print(response.statusCode);
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+
       print("////////////////////////////////////**************************");
 
-      //Get the response from the server
-      // var responseData = await response.stream.toBytes();
-      // print(responseData);
-      // var responseString = String.fromCharCodes(responseData);
-
-      // print(json.decode(responseString));
+      if (response.statusCode == 200) {
+        print(json.decode(responseString).toString());
+        setState(() {
+          paymentAmount = json.decode(responseString)['price'];
+        });
+        _showPaymentDialog(json.decode(responseString)['price'].toString());
+      } else {
+        toast(responseString);
+      }
     } else {
       print("error");
       toast("Inpt a valid quantity");
+    }
+  }
+
+  _confirmPickup(dynamic body) async {
+    var url = "http://192.168.29.132:3000/postings/picked";
+    var response = await http.post(url, body: {
+      'id': body['_id'],
+      'createdBy': body['createdBy'],
+      "amount": paymentAmount.toString()
+    });
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      _showPickedUpDialog();
+    } else {
+      toast(response.body);
     }
   }
 
@@ -343,7 +365,7 @@ class _PostingPageState extends State<PostingPage> {
               _showMessageDialog();
             } else {
               print("HAHAHAH");
-              //_confirmPickup(widget.posting);
+              _confirmPickup(widget.posting);
             }
           },
         ));

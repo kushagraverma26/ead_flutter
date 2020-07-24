@@ -126,7 +126,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   _generateBill(dynamic item) async {
     //Inventory Server
-    var url = "http://si-b84328f3.localhost.run/api/inventory/remove";
+    var url = "http://782adbc77eb0.ngrok.io/api/inventory/remove";
     var response = await http.post(url,
         headers: {'Content-Type': "application/x-www-form-urlencoded"},
         body: {'name': item['name'], 'quantity': item['quantity'].toString()});
